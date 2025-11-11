@@ -2,6 +2,7 @@ import { NextRequest , NextResponse } from "next/server";
 import bcrypt from "bcrypt";
 import connectDB from "@/lib/db";
 import User from "@/models/User";
+import { createToken } from "@/lib/auth";
 
 export async function  POST(req : NextRequest){
     try{
@@ -18,9 +19,9 @@ export async function  POST(req : NextRequest){
             return NextResponse.json({error : "Invalid Password"} , {status : 400});
         }
 
-        return NextResponse.json({
-            message : "Login Successful" , user : {id : user._id , name : user.name}
-        } , {status : 200});
+        const token = createToken(user._id.toString());
+
+        return NextResponse.json({token}, {status : 200});
     }
 
     catch(error : unknown){
