@@ -6,7 +6,7 @@ import User from "@/models/User";
 export async function POST(req : NextRequest){
     try{
         const body = await req.json();
-        const {name , email , password } = body;
+        const {username , email , password } = body;
 
         await connectDB();
 
@@ -18,13 +18,15 @@ export async function POST(req : NextRequest){
         const hashedPassword = await bcrypt.hash(password , 10);
 
         await User.create({
-            name,
+            name : username,
             email, 
             password : hashedPassword
         });
 
         return NextResponse.json({message : "User Created"} , {status : 200});
-    }catch(error : unknown){
-        return NextResponse.json({error : error} , {status : 400});
+    } catch (error: unknown) {
+        const message = error instanceof Error ? error.message : "An unknown error occurred";
+        return NextResponse.json({ error: message }, { status: 400 });
     }
+
 }

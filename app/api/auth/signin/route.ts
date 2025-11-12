@@ -1,12 +1,14 @@
+
 import { NextRequest , NextResponse } from "next/server";
 import bcrypt from "bcrypt";
 import connectDB from "@/lib/db";
 import User from "@/models/User";
+import { cookies } from "next/headers";
 import { createToken } from "@/lib/auth";
 
 export async function  POST(req : NextRequest){
     try{
-        const {email , password } = await req.json();
+        const {email , password } = await req.json();  
         await connectDB();
 
         const user = await User.findOne({email});
@@ -21,7 +23,18 @@ export async function  POST(req : NextRequest){
 
         const token = createToken(user._id.toString());
 
-        return NextResponse.json({token}, {status : 200});
+        
+
+        const cookieStore = await cookies();
+
+        cookieStore.set('jwt', token, {
+            httpOnly : true,
+            path : '/',
+            maxAge : 60*60
+
+        });
+
+        return NextResponse.json({message : "Login Successful"}, {status : 200});
     }
 
     catch(error : unknown){
