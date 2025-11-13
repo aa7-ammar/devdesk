@@ -26,7 +26,7 @@ export async function POST(req : Request){
 
     if(!user || typeof user.id !== "string")return NextResponse.json({error : "Unauthorized"} , {status : 401});
 
-    const title = await req.json();
+    const {title} = await req.json();
 
     const task = await Task.create({
         userId : user.id,
