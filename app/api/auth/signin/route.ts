@@ -20,6 +20,7 @@ export async function POST(req: NextRequest) {
     }
 
     const token = createToken(user._id.toString());
+    
 
     const res = NextResponse.json({ message: "Login Successful" });
 

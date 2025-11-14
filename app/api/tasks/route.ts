@@ -3,7 +3,7 @@ import connectDB from "@/lib/db";
 import {cookies} from "next/headers";
 import Task from "@/models/Tasks";
 import { NextResponse } from "next/server";
-import {JwtPayload} from "jsonwebtoken";
+// import {JwtPayload} from "jsonwebtoken";
 
 export async function GET(){
     await connectDB();

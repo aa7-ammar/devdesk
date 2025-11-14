@@ -76,7 +76,7 @@ export default function DashboardClient(){
     };
 
     return (
-    <div className="max-w-xl mx-auto mt-10 space-y-4 overflow-hidden">
+    <div className="max-w-xl mx-auto mt-10 space-y-4 ">
       <TypographyH1 title="My Tasks" />
 
       <form onSubmit={handleAddTask} className="flex gap-2">
@@ -88,18 +88,10 @@ export default function DashboardClient(){
       
         <ul className="space-y-2 mt-4">
             {tasks.length === 0 ? (
-            // <p className="text-gray-400 text-center">No tasks yet.</p>
             <TypographyH4 title="No tasks yet." />
             ) : (
             tasks.map((task) => (
-                <li
-                key={task._id}
-                
-                >
-                {/* <span>{task.title}</span>
-                <span className="text-sm text-gray-500">
-                    {new Date(task.createdAt).toLocaleDateString()}
-                </span> */}
+                <li key={task._id}>
                     <div className="*:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card grid grid-cols-1 gap-4 px-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow-xs lg:px-6 @xl/main:grid-cols-2 @5xl/main:grid-cols-4">
                         <Card className="@container/card hover:scale-103">
                             <CardHeader>
