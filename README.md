@@ -1,1 +1,1 @@
-A full-stack developer productivity dashboard built with Next.js 14, MongoDB, and Tailwind.
+A full-stack developer productivity dashboard built with Next.js 16, MongoDB, and Tailwind.
