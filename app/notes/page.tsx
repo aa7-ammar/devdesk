@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 
-import { verifyToken } from "@/lib/auth";
+import { verifyAccessToken } from "@/lib/auth";
 import NotesClient from "./NotesClient";
 
 const Notes = async()=>{
@@ -10,7 +10,7 @@ const Notes = async()=>{
 
     if(!token) redirect("/signin");
 
-    const user = verifyToken(token!);
+    const user = verifyAccessToken(token!);
     if(!user)redirect("/signin");   
 
     

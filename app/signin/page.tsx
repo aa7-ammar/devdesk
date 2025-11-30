@@ -114,7 +114,7 @@ function Signin() {
         </CardContent>
         <CardFooter className="flex-col gap-2">
             <Button onClick={handleSubmit} disabled={loading} className="w-full cursor-pointer">
-            {loading ? "Creating" : "LogIn"}
+            {loading ? "Logging In" : "LogIn"}
             </Button>
             {/* <Button variant="outline" className="w-full">
             Login with Google

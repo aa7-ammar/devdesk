@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers"
 
-import { verifyToken } from "@/lib/auth";
+import { verifyAccessToken } from "@/lib/auth";
 import SnippetsClient from "./SnippetsClient";
 
 const Snippets = async()=>{
@@ -12,7 +12,7 @@ const Snippets = async()=>{
         redirect("/signin");
     }
 
-    const user = verifyToken(token!);
+    const user = verifyAccessToken(token!);
     if(!user){
         redirect("/signin");
     }
