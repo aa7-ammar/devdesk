@@ -12,7 +12,7 @@ const Settings = async()=>{
     const user = verifyAccessToken(token);
     if(!user)redirect("/signin");
 
-    return <SettingClient/>;
+    return <SettingClient userId = {user.id}/>;
 
 
 }

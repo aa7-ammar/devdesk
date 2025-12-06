@@ -1,36 +1,47 @@
-import jwt, { JwtPayload } from "jsonwebtoken";
+import jwt, { JwtPayload, SignOptions } from "jsonwebtoken";
+import { ENV } from "./env";
 
-const ACCESS_EXPIRES = process.env.ACCESS_EXPIRES || "15m";
-const REFRESH_EXPIRES = process.env.REFRESH_EXPIRES || "7d";
+export function createAccessToken(userId: string): string {
+  const options: SignOptions = {
+    expiresIn: ENV.ACCESS_EXPIRES,
+  };
 
-export function createAccessToken(userId: string) {
-  
-    return jwt.sign(
-    { id: userId },
-    process.env.JWT_ACCESS_SECRET!,     // MUST EXIST
-    { expiresIn: ACCESS_EXPIRES }
-  );
-}
-
-export function createRefreshToken(userId: string) {
   return jwt.sign(
     { id: userId },
-    process.env.JWT_REFRESH_SECRET!,   // MUST EXIST
-    { expiresIn: REFRESH_EXPIRES }
+    ENV.JWT_ACCESS_SECRET, // ✅ now guaranteed string
+    options
   );
 }
 
-export function verifyAccessToken(token: string) {
+export function createRefreshToken(userId: string): string {
+  const options: SignOptions = {
+    expiresIn: ENV.REFRESH_EXPIRES,
+  };
+
+  return jwt.sign(
+    { id: userId },
+    ENV.JWT_REFRESH_SECRET,
+    options
+  );
+}
+
+export function verifyAccessToken(token: string): JwtPayload | null {
   try {
-    return jwt.verify(token, process.env.JWT_ACCESS_SECRET!) as JwtPayload;
+    return jwt.verify(
+      token,
+      ENV.JWT_ACCESS_SECRET
+    ) as JwtPayload;
   } catch {
     return null;
   }
 }
 
-export function verifyRefreshToken(token: string) {
+export function verifyRefreshToken(token: string): JwtPayload | null {
   try {
-    return jwt.verify(token, process.env.JWT_REFRESH_SECRET!) as JwtPayload;
+    return jwt.verify(
+      token,
+      ENV.JWT_REFRESH_SECRET
+    ) as JwtPayload;
   } catch {
     return null;
   }

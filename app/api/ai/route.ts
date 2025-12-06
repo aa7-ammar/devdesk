@@ -34,7 +34,7 @@ export async function POST(req : Request){
 
         if(!code || typeof code !== "string"){
             return NextResponse.json({
-                error : "Missing 'code"
+                error : "Missing code"
 
             }, {
                 status : 400

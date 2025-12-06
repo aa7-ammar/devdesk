@@ -2,7 +2,6 @@
 import { Button } from "@/components/ui/button"
 import {
   Card,
-  CardAction,
   CardContent,
   CardDescription,
   CardFooter,
@@ -13,7 +12,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
-import { toast, Toaster } from "sonner"
+import { toast } from "sonner"
 
 function Signin() {
     const router = useRouter();
@@ -33,23 +32,25 @@ function Signin() {
                 method : "POST",
                 headers : {"Content-Type" : "application/json"},
                 body : JSON.stringify(form),
+                credentials : "include"
             });
 
             const data = await res.json();
 
             if (!res.ok) {
-            const message =
-                typeof data.error === "string"
-                ? data.error
-                : data.error?.message || "Login failed";
+                const message = typeof data.error === "string" ? data.error : data.error?.message || "Login failed";
                 toast.error(message);
                 setLoading(false);
                 return;
             }
 
-            toast("Login successful!",{ description: "Redirecting to dashboard..." });
+            toast.success("Login successful!");
 
-            setTimeout(()=>{router.push("/dashboard")}, 1500);
+            
+
+            
+            router.push("/dashboard");
+            router.refresh();
         }
         catch(e){
             toast.error("Something went wrong");
@@ -66,24 +67,10 @@ function Signin() {
             <CardDescription>
             Enter your email and password below to log in
             </CardDescription>
-            {/* <CardAction>
-            <Button variant="link">Sign Up</Button>
-            </CardAction> */}
         </CardHeader>
         <CardContent>
-            <form>
+            <form onSubmit={handleSubmit}>
             <div className="flex flex-col gap-6">
-                {/* <div className="grid gap-2">
-                <Label htmlFor="text">Username</Label>
-                <Input
-                    id="username"
-                    type="text"
-                    placeholder="johndoe"
-                    value={form.username}
-                    onChange={handleChange}
-                    required
-                />
-                </div> */}
                 <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
                 <Input
@@ -98,16 +85,8 @@ function Signin() {
                 </div>
                 
                 <div className="grid gap-2">
-                {/* <div className="flex items-center"> */}
                     <Label htmlFor="password">Password</Label>
-                    {/* <a
-                    href="#"
-                    className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
-                    >
-                    Forgot your password?
-                    </a> */}
-                {/* </div> */}
-                <Input id="password" name="password" type="password" placeholder="********" value={form.password} onChange={handleChange} required />
+                    <Input id="password" name="password" type="password" placeholder="********" value={form.password} onChange={handleChange} required />
                 </div>
             </div>
             </form>
@@ -116,9 +95,6 @@ function Signin() {
             <Button onClick={handleSubmit} disabled={loading} className="w-full cursor-pointer">
             {loading ? "Logging In" : "LogIn"}
             </Button>
-            {/* <Button variant="outline" className="w-full">
-            Login with Google
-            </Button> */}
         </CardFooter>
         </Card>  
     </div>
