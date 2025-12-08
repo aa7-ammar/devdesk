@@ -1,28 +1,35 @@
-# DevDesk 🚀
+# DevDesk – Developer Productivity Suite
 
-A full-stack developer productivity platform.
+## 🚀 Overview
+DevDesk is a full-stack productivity platform built for developers to manage tasks, notes, code snippets, and AI-assisted workflows securely.
 
-## Features
-- Secure authentication (JWT + httpOnly cookies)
-- Task management
-- Notes & code snippets
-- AI-powered code improvement
-- Analytics dashboard
-- Search, pagination & rate limiting
-
-## Tech Stack
-- Next.js (App Router)
+## 🧱 Tech Stack
+- Next.js 14 (App Router)
 - TypeScript
 - MongoDB + Mongoose
-- shadcn/ui
-- Gemini API
+- JWT Authentication (Access + Refresh Tokens)
+- shadcn/ui + Tailwind CSS
+- Rate Limiting + Secure APIs
 
-## Architecture
-- Server-side authentication
-- Protected API routes
-- Modular models & services
+## 🔐 Key Features
+- Authentication with HttpOnly cookies
+- Task, Notes & Code Snippets CRUD
+- Pagination & Search
+- AI-assisted code improvement
+- Protected routes & RBAC checks
+- Analytics dashboard
+- User settings & profile management
 
-## Getting Started
+## 🧠 Architecture Decisions
+- Server Components for auth-protected pages
+- Client Components only where interactivity is needed
+- Centralized auth utilities
+- Stateless JWT + Refresh Token rotation
+
+## 📸 Screenshots
+
+
+## 🛠️ Setup Instructions
 1. Clone repo
 2. Add .env.local
 3. npm install
