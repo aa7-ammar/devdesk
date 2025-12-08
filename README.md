@@ -27,6 +27,12 @@ DevDesk is a full-stack productivity platform built for developers to manage tas
 - Stateless JWT + Refresh Token rotation
 
 ## 📸 Screenshots
+<img width="1899" height="922" alt="image" src="https://github.com/user-attachments/assets/f575dca3-e9f0-4631-a540-6a1167497cda" />
+<img width="1892" height="916" alt="image" src="https://github.com/user-attachments/assets/55c6a4dc-8c49-489a-b987-fb78e8a316fa" />
+<img width="1903" height="920" alt="image" src="https://github.com/user-attachments/assets/22d711cd-067e-4a0c-a696-596b7db88bd7" />
+
+
+
 
 
 ## 🛠️ Setup Instructions
