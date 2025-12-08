@@ -12,7 +12,7 @@ interface Feature {
   title: string;
   description: string;
   icon: LucideIcon;
-  gradient: string; // Used for the subtle glow behind the icon
+  gradient: string; 
 }
 
 const features: Feature[] = [
@@ -91,7 +91,7 @@ export default function FeaturesGrid() {
                 {feature.description}
               </p>
 
-              {/* Decorative Gradient Blob on Hover (Optional aesthetic touch) */}
+              {/* Decorative Gradient Blob on Hover */}
               <div 
                 className="pointer-events-none absolute -inset-px opacity-0 transition-opacity duration-300 group-hover:opacity-100"
                 aria-hidden="true"

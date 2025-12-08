@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { Check } from 'lucide-react';
 import { Button } from '@/components/ui/button'; 
 
@@ -31,7 +31,7 @@ export default function Pricing() {
         "Private Knowledge Base"
       ],
       cta: "Get Started",
-      variant: "default", // Primary accent color
+      variant: "default", 
       popular: true,
     },
     {

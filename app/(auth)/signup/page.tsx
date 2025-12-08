@@ -1,132 +1,189 @@
 "use client";
-import { Button } from "@/components/ui/button"
+
+import { Button } from "@/components/ui/button";
 import {
   Card,
-  CardAction,
   CardContent,
   CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { useRouter } from "next/navigation"
-import { useState } from "react"
-import { toast} from "sonner"
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { toast } from "sonner";
+import Link from "next/link";
+// Added 'X' to imports
+import { User, Mail, Lock, Loader2, ArrowRight, X } from "lucide-react";
 
 function Signup() {
-    const router = useRouter();
-    const [form , setForm] = useState({username : "" , email : "" , password : ""});
-    const [loading , setLoading] = useState(false);
+  const router = useRouter();
+  const [form, setForm] = useState({ username: "", email: "", password: "" });
+  const [loading, setLoading] = useState(false);
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setForm({ ...form, [e.target.name]: e.target.value });
-    };
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
 
-    const handleSubmit = async (e : React.FormEvent)=> {
-        e.preventDefault();
-        setLoading(true);
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if(!form.username || !form.email || !form.password) return toast.error("Please fill in all fields");
 
-        try{
-            const res = await fetch("/api/auth/signup" , {
-                method : "POST",
-                headers : {"Content-Type" : "application/json"},
-                body : JSON.stringify(form),
-            });
+    setLoading(true);
 
-            const data = await res.json();
+    try {
+      const res = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
 
-            if (!res.ok) {
-            const message =
-                typeof data.error === "string"
-                ? data.error
-                : data.error?.message || "Signup failed";
-                toast.error(message);
-                setLoading(false);
-                return;
-            }
+      const data = await res.json();
 
+      if (!res.ok) {
+        const message =
+          typeof data.error === "string"
+            ? data.error
+            : data.error?.message || "Signup failed";
+        toast.error(message);
+        setLoading(false);
+        return;
+      }
 
-            toast.success("Redirecting to Login...");
-
-            setTimeout(()=>{router.push("/signin")}, 1500);
-        }
-        catch(e){
-            toast.error("Something went wrong");
-            
-
-        }finally{
-            setLoading(false);
-        }
+      toast.success("Account created! Redirecting...");
+      setTimeout(() => {
+        router.push("/signin");
+      }, 1500);
+    } catch (e) {
+      toast.error("Something went wrong");
+    } finally {
+      setLoading(false);
     }
-    
-    return (
-    <div className="flex h-screen justify-center items-center ">
-        <Card className="w-full max-w-sm">
-        <CardHeader>
-            <CardTitle>Signup to make an account</CardTitle>
-            <CardDescription>
-            Enter your email and username below to signup 
-            </CardDescription>
-            {/* <CardAction>
-            <Button variant="link">Sign Up</Button>
-            </CardAction> */}
+  };
+
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-background p-4 relative overflow-hidden">
+      
+      {/* Background Decoration */}
+      <div className="absolute inset-0 bg-grid-white/[0.02] bg-[size:60px_60px]" />
+      <div className="absolute h-full w-full bg-background [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)]" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-lg h-full max-h-[500px] bg-indigo-500/20 blur-[100px] rounded-full -z-10" />
+
+      {/* Added 'relative' to Card for absolute positioning of the X button */}
+      <Card className="relative w-full max-w-sm border-white/10 bg-white/5 shadow-2xl backdrop-blur-sm">
+        
+        {/* NEW: Close Button (Top Right) */}
+        <Button
+            variant="ghost"
+            size="icon"
+            className="absolute right-4 top-4 h-6 w-6 text-muted-foreground hover:text-foreground cursor-pointer"
+            asChild
+        >
+            <Link href="/">
+                <X className="h-4 w-4" />
+                <span className="sr-only">Close</span>
+            </Link>
+        </Button>
+
+        <CardHeader className="space-y-1 text-center">
+          {/* Logo */}
+          <div className="flex justify-center mb-4">
+             <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-indigo-600/20 text-indigo-400 font-bold text-xl border border-indigo-500/30">
+                &gt;_
+             </div>
+          </div>
+          <CardTitle className="text-2xl font-bold tracking-tight">Create an account</CardTitle>
+          <CardDescription>
+            Enter your details below to join DevDesk
+          </CardDescription>
         </CardHeader>
+        
         <CardContent>
-            <form>
-            <div className="flex flex-col gap-6">
-                <div className="grid gap-2">
-                <Label htmlFor="text">Username</Label>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            
+            <div className="space-y-2">
+              <Label htmlFor="username">Username</Label>
+              <div className="relative">
+                <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
-                    id="username"
-                    name="username"
-                    type="text"
-                    placeholder="johndoe"
-                    value={form.username}
-                    onChange={handleChange}
-                    required
+                  id="username"
+                  name="username"
+                  type="text"
+                  placeholder="johndoe"
+                  value={form.username}
+                  onChange={handleChange}
+                  required
+                  className="pl-9 bg-black/20 border-white/10 focus-visible:ring-indigo-500 transition-all hover:bg-black/30"
                 />
-                </div>
-                <div className="grid gap-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                    id="email"
-                    name="email"
-                    type="email"
-                    placeholder="m@example.com"
-                    value={form.email}
-                    onChange={handleChange}
-                    required
-                />
-                </div>
-                
-                <div className="grid gap-2">
-                {/* <div className="flex items-center"> */}
-                    <Label htmlFor="password">Password</Label>
-                    {/* <a
-                    href="#"
-                    className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
-                    >
-                    Forgot your password?
-                    </a> */}
-                {/* </div> */}
-                <Input id="password" name="password" type="password" placeholder="********" value={form.password} onChange={handleChange} required />
-                </div>
+              </div>
             </div>
-            </form>
-        </CardContent>
-        <CardFooter className="flex-col gap-2">
-            <Button onClick={handleSubmit} disabled={loading} className="w-full cursor-pointer">
-            {loading ? "Creating" : "SignUp"}
+
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="email"
+                  name="email"
+                  type="email"
+                  placeholder="m@example.com"
+                  value={form.email}
+                  onChange={handleChange}
+                  required
+                  className="pl-9 bg-black/20 border-white/10 focus-visible:ring-indigo-500 transition-all hover:bg-black/30"
+                />
+              </div>
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="password">Password</Label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="password"
+                  name="password"
+                  type="password"
+                  placeholder="••••••••"
+                  value={form.password}
+                  onChange={handleChange}
+                  required
+                  className="pl-9 bg-black/20 border-white/10 focus-visible:ring-indigo-500 transition-all hover:bg-black/30"
+                />
+              </div>
+            </div>
+
+            <Button 
+                type="submit" 
+                disabled={loading} 
+                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white transition-all shadow-[0_0_20px_rgba(79,70,229,0.3)] hover:shadow-[0_0_30px_rgba(79,70,229,0.5)] cursor-pointer"
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Creating account...
+                </>
+              ) : (
+                <>
+                    Sign Up <ArrowRight className="ml-2 h-4 w-4" />
+                </>
+              )}
             </Button>
-            {/* <Button variant="outline" className="w-full">
-            Login with Google
-            </Button> */}
+
+          </form>
+        </CardContent>
+        
+        <CardFooter className="flex flex-col gap-4 border-t border-white/5 pt-6">
+          <div className="text-center text-sm text-muted-foreground">
+            Already have an account?{" "}
+            <Link href="/signin" className="font-medium text-indigo-400 hover:text-indigo-300 underline-offset-4 hover:underline transition-all">
+              Log in
+            </Link>
+          </div>
         </CardFooter>
-        </Card>
+      </Card>
     </div>
-  )
+  );
 }
 
 export default Signup;

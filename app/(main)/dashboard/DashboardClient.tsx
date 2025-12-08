@@ -3,12 +3,19 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { TypographyH1 } from "@/components/TypographyH1";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { TypographyH4 } from "@/components/TypographyH4";
-import { Card, CardTitle, CardHeader, CardFooter } from "@/components/ui/card";
-import { Copy, Trash2 } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Badge } from "@/components/ui/badge"; 
+import { 
+  Copy, 
+  Trash2, 
+  Plus, 
+  Search, 
+  CalendarDays, 
+  CheckCircle2,
+  TerminalSquare
+} from "lucide-react";
 
 interface Tasks {
   _id: string;
@@ -26,8 +33,8 @@ export default function DashboardClient() {
   const [hasMore, setHasMore] = useState(true);
   const [title, setTitle] = useState("");
   const [loading, setLoading] = useState(false);
+  const [adding, setAdding] = useState(false); // Separate loading state for adding
 
-  
   const loadFunction = async (reset = false) => {
     try {
       setLoading(true);
@@ -62,29 +69,24 @@ export default function DashboardClient() {
     }
   };
 
-  
   useEffect(() => {
     loadFunction(true);
   }, []);
 
-  
   useEffect(() => {
     if (page !== 1) loadFunction(false);
   }, [page]);
 
-  
   useEffect(() => {
     setPage(1);
     loadFunction(true);
   }, [query]);
 
-  
   const handleAddTask = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title.trim())
-      return toast.error("Title cannot be empty");
+    if (!title.trim()) return toast.error("Title cannot be empty");
 
-    setLoading(true);
+    setAdding(true);
 
     const res = await fetch("/api/tasks", {
       method: "POST",
@@ -95,167 +97,182 @@ export default function DashboardClient() {
     if (!res.ok) {
       const data = await res.json();
       toast.error(data.error || "Failed to add task");
-      setLoading(false);
+      setAdding(false);
       return;
     }
 
-    toast.success("Task added");
+    toast.success("Task added to stack");
     setTitle("");
     setPage(1);
     loadFunction(true);
-    setLoading(false);
-  }
+    setAdding(false);
+  };
 
-  const handleDeleteTask = async(id : string)=>{
-      try{
-        const res = await fetch(`/api/tasks/${id}` , {
-          method : "DELETE",
-          credentials : "include"
-        });
+  const handleDeleteTask = async (id: string) => {
+    try {
+      // Optimistic update for snappier feel
+      const previousTasks = [...tasks];
+      setTasks(tasks.filter((t) => t._id !== id));
 
-        if(!res.ok){
-          const data = await res.json();
-          toast.error(data.error || "Failed to delete");
-          return;
-        }
+      const res = await fetch(`/api/tasks/${id}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
 
-        toast.success("Task deleted");
-        setPage(1);
-        loadFunction(true);
-        setLoading(false);
+      if (!res.ok) {
+        // Revert if failed
+        setTasks(previousTasks);
+        const data = await res.json();
+        toast.error(data.error || "Failed to delete");
+        return;
       }
-
-      catch(e){
-        toast.error("Error deleting task");
-      }
+      toast.success("Task cleared");
+    } catch (e) {
+      toast.error("Error deleting task");
     }
+  };
 
   return (
-    <div className="max-w-xl mx-auto mt-10 space-y-4 ">
-      <TypographyH1 title="My Tasks" />
-
+    <div className="max-w-4xl mx-auto mt-10 space-y-8 px-4 md:px-6 pb-20">
       
-      <form onSubmit={handleAddTask} className="flex gap-2">
-        <Input
-          placeholder="Enter task..."
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-        />
-        <Button disabled={loading} className="cursor-pointer hover:scale-105">
-          {loading ? "Adding..." : "Add"}
-        </Button>
-      </form>
+      {/* Header Section */}
+      <div className="flex flex-col space-y-2">
+        <h1 className="text-3xl font-bold tracking-tight text-foreground flex items-center gap-3">
+          <TerminalSquare className="w-8 h-8 text-indigo-500" />
+          Task Command
+        </h1>
+        <p className="text-muted-foreground text-lg">
+          Manage your daily stack. Stay focused.
+        </p>
+      </div>
 
-      
-      <Input
-        placeholder="Search tasks..."
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        className="mb-4"
-      />
+      {/* Control Panel (Add & Search) */}
+      <div className="grid gap-4 md:grid-cols-3">
+        {/* Add Task Form - Takes up 2 columns */}
+        <form onSubmit={handleAddTask} className="md:col-span-2 relative group">
+          <div className="relative">
+            <Input
+              placeholder="Initialize new task..."
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              disabled={adding}
+              className="pl-4 pr-24 h-12 bg-white/5 border-white/10 focus-visible:ring-indigo-500 focus-visible:border-indigo-500 transition-all hover:bg-white/[0.07]"
+            />
+            <Button 
+              disabled={adding || !title.trim()} 
+              type="submit"
+              size="sm"
+              className="absolute right-1.5 top-1.5 bottom-1.5 bg-indigo-600 hover:bg-indigo-700 text-white transition-all"
+            >
+              {adding ? (
+                <span className="animate-pulse">Adding...</span>
+              ) : (
+                <div className="flex items-center gap-1">
+                  Add <Plus className="w-3 h-3" />
+                </div>
+              )}
+            </Button>
+          </div>
+        </form>
 
-      
-      <ul className="space-y-2 mt-4">
-        {tasks.length === 0 ? (
-          <TypographyH4 title="No such tasks." />
+        {/* Search Bar - Takes up 1 column */}
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <Input
+            placeholder="Filter stack..."
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            className="pl-9 h-12 bg-white/5 border-white/10 focus-visible:ring-indigo-500 transition-all hover:bg-white/[0.07]"
+          />
+        </div>
+      </div>
+
+      {/* Task List */}
+      <div className="space-y-3">
+        {loading && tasks.length === 0 ? (
+           // Loading Skeletons
+           Array.from({ length: 3 }).map((_, i) => (
+             <Skeleton key={i} className="h-20 w-full rounded-xl bg-white/5" />
+           ))
+        ) : tasks.length === 0 ? (
+          // Empty State
+          <div className="flex flex-col items-center justify-center py-16 border border-dashed border-white/10 rounded-xl bg-white/[0.02]">
+            <CheckCircle2 className="w-12 h-12 text-muted-foreground/20 mb-4" />
+            <h4 className="text-lg font-medium text-muted-foreground">Stack empty</h4>
+            <p className="text-sm text-muted-foreground/60">No tasks found. Add one to get started.</p>
+          </div>
         ) : (
           tasks.map((task) => (
-            <li key={task._id}>
-              <Card className="opacity-70 hover:opacity-100">
-                <CardHeader>
-                  <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">{task.title}</CardTitle>
-                </CardHeader>
-                <CardFooter className="flex-col items-start gap-1.5 text-sm">
-                           <div className="line-clamp-1 flex gap-1 font-medium">
-                                 {new Date(task.createdAt).toLocaleDateString()}
-                                 <Button className="cursor-pointer p-0 h-auto w-auto opacity-70 hover:opacity-100" variant="destructive" onClick={()=>{
-                                  handleDeleteTask(task._id)
-                                 }}><Trash2/></Button>
+            <div 
+              key={task._id}
+              className="group relative flex flex-col md:flex-row md:items-center justify-between gap-4 p-5 rounded-xl border border-white/10 bg-white/5 transition-all duration-300 hover:border-indigo-500/30 hover:bg-white/[0.08] hover:shadow-[0_0_20px_rgba(0,0,0,0.2)]"
+            >
+              {/* Left Side: Title */}
+              <div className="flex items-start gap-4">
+                {/* Visual Checkbox (Decorative) */}
+                <div className="mt-1 flex h-5 w-5 shrink-0 items-center justify-center rounded border border-white/20 group-hover:border-indigo-500/50 transition-colors">
+                    <div className="h-2.5 w-2.5 rounded-[1px] bg-indigo-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+                </div>
+                
+                <div className="space-y-1">
+                    <span className="text-base font-medium text-foreground/90 group-hover:text-white transition-colors">
+                        {task.title}
+                    </span>
+                </div>
+              </div>
 
-                                 <Button className="cursor-pointer p-0 h-auto w-auto opacity-70 hover:opacity-100" size="icon" variant="ghost" onClick={()=>{
-                                  navigator.clipboard.writeText(task.title);
-                                  toast.success("Task copied to clipboard");
-                                 }} ><Copy className="w-4 h-4"/></Button>
-                            </div>
-                            
-                </CardFooter>
-              </Card>
-            </li>
+              {/* Right Side: Metadata & Actions */}
+              <div className="flex items-center justify-between md:justify-end gap-6 pl-9 md:pl-0">
+                {/* Date Badge */}
+                <Badge variant="secondary" className="bg-black/20 text-muted-foreground hover:bg-black/40 font-mono text-[10px] uppercase tracking-wider gap-1.5 px-2 py-1 h-7 border-white/5">
+                   <CalendarDays className="w-3 h-3" />
+                   {new Date(task.createdAt).toLocaleDateString()}
+                </Badge>
+
+                {/* Action Buttons */}
+                <div className="flex items-center gap-1">
+                    <Button 
+                        size="icon" 
+                        variant="ghost" 
+                        className="h-8 w-8 text-muted-foreground hover:text-white hover:bg-white/10"
+                        onClick={() => {
+                            navigator.clipboard.writeText(task.title);
+                            toast.success("Copied to clipboard");
+                        }}
+                    >
+                        <Copy className="w-4 h-4" />
+                        <span className="sr-only">Copy</span>
+                    </Button>
+                    
+                    <Button 
+                        size="icon" 
+                        variant="ghost" 
+                        className="h-8 w-8 text-muted-foreground hover:text-red-400 hover:bg-red-400/10 transition-colors"
+                        onClick={() => handleDeleteTask(task._id)}
+                    >
+                        <Trash2 className="w-4 h-4" />
+                        <span className="sr-only">Delete</span>
+                    </Button>
+                </div>
+              </div>
+            </div>
           ))
         )}
-      </ul>
+      </div>
 
-      
-      <div className="w-full flex justify-center">
+      {/* Load More */}
+      <div className="flex justify-center pt-4">
         {hasMore && (
-            <Button onClick={() => setPage((p) => p + 1)} disabled={loading} className="cursor-pointer hover:scale-105">
-            {loading ? "Loading..." : "Load More"}
-            </Button>
+          <Button 
+            variant="outline"
+            onClick={() => setPage((p) => p + 1)} 
+            disabled={loading}
+            className="bg-transparent border-white/10 text-muted-foreground hover:text-white hover:bg-white/5 hover:border-white/20 min-w-[150px]"
+          >
+            {loading ? "Syncing..." : "Load Older Tasks"}
+          </Button>
         )}
       </div>
     </div>
   );
 }
-
-
-    
-
-//     return (
-//     <div className="max-w-xl mx-auto mt-10 space-y-4 ">
-//       <TypographyH1 title="My Tasks" />
-
-//       <form onSubmit={handleAddTask} className="flex gap-2">
-//         <Input type="text" placeholder="Enter task title..." name="title" value={title} onChange={(e)=>setTitle(e.target.value)}/>
-//         <Button disabled={loading} className="cursor-pointer hover:scale-105">{loading ? "Adding" : "Add"}</Button>
-        
-//       </form>
-
-      
-//             <Input
-//                 placeholder="Search tasks..."
-//                 value={query}
-//                 onChange={(e) => setQuery(e.target.value)}
-//                 className="mb-4"
-//             />
-
-        
-
-      
-//         <ul className="space-y-2 mt-4">
-//             {filteredTasks.length === 0 ? (
-//             <TypographyH4 title="No such tasks yet." />
-//             ) : (
-//             filteredTasks.map((task) => (
-//                 <li key={task._id}>
-//                     <div className="*:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card grid grid-cols-1 gap-4 px-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow-xs lg:px-6 @xl/main:grid-cols-2 @5xl/main:grid-cols-4">
-//                         <Card className="@container/card opacity-70 hover:opacity-100 transition duration-100">
-//                             <CardHeader>
-                            
-//                             <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-//                                 {task.title}
-//                             </CardTitle>
-                            
-//                             </CardHeader>
-//                             <CardFooter className="flex-col items-start gap-1.5 text-sm">
-//                             <div className="line-clamp-1 flex gap-2 font-medium">
-//                                  {new Date(task.createdAt).toLocaleDateString()}
-//                             </div>
-                            
-//                             </CardFooter>
-//                         </Card>
-                    
-//                     </div>
-//                 </li>
-//             ))
-//             )}
-//          </ul>
-
-//          {hasMore && (
-//             <Button onClick={() => setPage(p => p + 1)} disabled={loading}>
-//                 {loading ? "Loading..." : "Load More"}
-//             </Button>
-//         )}
-      
-//     </div>
-//   );
-// }

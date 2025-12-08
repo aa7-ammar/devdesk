@@ -5,9 +5,9 @@ import {
   Code2, 
   Sparkles, 
   ArrowRight,
-  Trello, // Placeholder for Jira
+  Trello, 
   Slack,
-  Figma, // Placeholder for Notion
+  Figma, 
   Github
 } from 'lucide-react';
 
@@ -117,10 +117,10 @@ function ChaosIcon({ Icon, top, left, right, bottom, rotate, color }: any) {
 }
 
 // For the organized icons on the right
-// 1. Define the allowed keys explicitly
+
 type HubPosition = 'top' | 'bottom' | 'left' | 'right';
 
-// 2. Update the helper component with specific types instead of 'any'
+
 function HubIcon({ 
   Icon, 
   position, 
@@ -133,7 +133,7 @@ function HubIcon({
   label: string; 
 }) {
   
-  // 3. Now TypeScript knows 'position' will always match one of these keys
+  
   const positions: Record<HubPosition, string> = {
     top: 'top-0 left-1/2 -translate-x-1/2',
     bottom: 'bottom-0 left-1/2 -translate-x-1/2',

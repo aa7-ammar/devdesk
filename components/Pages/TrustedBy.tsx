@@ -1,6 +1,4 @@
-import React from 'react';
 
-// ... (Keep your imports or SVG definitions here)
 
 export default function TrustedBy() {
   const logos = [
@@ -19,11 +17,6 @@ export default function TrustedBy() {
           Trusted by developers at innovative companies
         </h3>
 
-        {/* FIX: 
-          1. Removed the 'mask-gradient' class.
-          2. Added the 'style' prop directly.
-          3. This removes the need for <style jsx> and fixes the Server Component error.
-        */}
         <div 
           className="relative w-full max-w-5xl mx-auto"
           style={{
@@ -58,7 +51,7 @@ export default function TrustedBy() {
   );
 }
 
-// ... Keep your SVG Logo functions below exactly as they were ...
+
 function VercelLogo({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 1155 1000" fill="currentColor" className={className}>

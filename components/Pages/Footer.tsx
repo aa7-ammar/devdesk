@@ -1,4 +1,3 @@
-import React from 'react';
 import Link from 'next/link';
 import { Github, Twitter, Linkedin } from 'lucide-react';
 
@@ -34,7 +33,7 @@ export default function Footer() {
         {/* Top Section: 5-Column Grid */}
         <div className="grid grid-cols-2 md:grid-cols-5 gap-8 mb-16">
           
-          {/* Column 1: Brand (Spans 2 columns on mobile for better balance) */}
+          {/* Column 1: Brand  */}
           <div className="col-span-2 md:col-span-1">
             <Link href="/" className="flex items-center gap-2 mb-4">
                {/* Simple Logo Placeholder */}
@@ -49,7 +48,7 @@ export default function Footer() {
           </div>
 
           {/* Columns 2-5: Links */}
-          {/* We map over the sections to keep the code DRY */}
+          
           <div className="flex flex-col gap-4">
             <h4 className="font-semibold text-foreground text-sm">Product</h4>
             <ul className="flex flex-col gap-2">
@@ -123,15 +122,15 @@ export default function Footer() {
           </p>
           
           <div className="flex items-center gap-6">
-            <Link href="#" className="text-muted-foreground hover:text-white transition-colors">
+            <Link href="https://x.com/aa7_ammar" className="text-muted-foreground hover:text-white transition-colors">
               <Twitter className="h-5 w-5" />
               <span className="sr-only">Twitter</span>
             </Link>
-            <Link href="#" className="text-muted-foreground hover:text-white transition-colors">
+            <Link href="https://github.com/aa7-ammar" className="text-muted-foreground hover:text-white transition-colors">
               <Github className="h-5 w-5" />
               <span className="sr-only">GitHub</span>
             </Link>
-            <Link href="#" className="text-muted-foreground hover:text-white transition-colors">
+            <Link href="https://www.linkedin.com/in/helloammar/" className="text-muted-foreground hover:text-white transition-colors">
               <Linkedin className="h-5 w-5" />
               <span className="sr-only">LinkedIn</span>
             </Link>
