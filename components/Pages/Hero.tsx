@@ -2,6 +2,7 @@ import { TypographyBlockquote } from "@/components/BlockQuote";
 import { TypographyH1 } from "@/components/TypographyH1";
 import { TypographyH4 } from "@/components/TypographyH4";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 import Image from "next/image";
 
@@ -24,7 +25,7 @@ const Hero = () => {
 
           <div className="flex flex-col items-center space-y-4">
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button size="lg" className="px-8 bg-indigo-600 hover:bg-indigo-700 shadow-[0_0_30px_rgba(79,70,229,0.3)]">Start Building</Button>
+              <Link href="/signup"><Button size="lg" className="cursor-pointer px-8 bg-indigo-600 hover:bg-indigo-700 shadow-[0_0_30px_rgba(79,70,229,0.3)]">Start Building</Button></Link>
               <Button variant="outline" size="lg" className="px-8 backdrop-blur-sm bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20">View Documentation</Button>
             </div>
 
